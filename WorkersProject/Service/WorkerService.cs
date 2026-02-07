@@ -27,12 +27,13 @@ namespace WorkersProject.Services
         public async Task<WorkerResponse> GetByIdAsync(int id)
         {
             var worker = await _repository.GetByIdAsync(id);
+            if(worker == null || !worker.IsActive) return null;
             return _mapper.Map<WorkerResponse>(worker);
         }
-       
+
         public async Task<WorkerResponse> CreateWorkerAsync(CreateWorkerRequest request)
         {
-            var worker =  _mapper.Map<Worker>(request);
+            var worker = _mapper.Map<Worker>(request);
             worker.IsActive = true;
             await _repository.AddWorkerAsync(worker);
             return _mapper.Map<WorkerResponse>(worker);
@@ -41,7 +42,7 @@ namespace WorkersProject.Services
         public async Task<WorkerResponse> UpdateWorkerAsync(int id, UpdateWorkerRequest request)
         {
             var existingWorker = await _repository.GetByIdAsync(id);
-            if (existingWorker == null) return null;
+            if (existingWorker == null || !existingWorker.IsActive)  return null;
             
             _mapper.Map(request, existingWorker);
             await _repository.UpdateWorkerAsync(id, existingWorker);

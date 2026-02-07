@@ -54,9 +54,5 @@ namespace WorkersProject.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-
-
-
-
     }
 }

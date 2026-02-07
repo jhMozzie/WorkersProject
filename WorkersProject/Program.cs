@@ -31,6 +31,25 @@ builder.Services.AddAutoMapper(cfg =>
 builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
 builder.Services.AddScoped<IWorkerService, WorkerService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowVueApp", policy =>
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            // Desarrollo: permite localhost
+            policy.WithOrigins(
+                    "http://localhost:5173",
+                    "http://localhost:3000",
+                    "http://localhost:8080"
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -49,6 +68,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowVueApp");
 app.UseAuthorization();
 app.MapControllers();
 
